@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+
+<script src="{{ url_for('static',filename='jquery.min.js') }}"></script>
+<script>
+    $(function () {
+        $("#btn").click(function () {
+            $.ajax({
+                //async:true,
+                url: "http://192.168.1.100:5000/test",
+                type: "GET",
+
+                //contentType:"applicantion/text",
+                // json:"jsoncallback",
+                // jsonCallback:'handleResponse',
+                // processData:"false",
+                success: function (data) {
+                    {#alert(1)#}
+                    console.warn("kkkkk")
+                    console.warn(data)
+                },
+                dataType: "json"
+
+                /*error:function (XMLHttpRequest,textStatus,errorThrown) {
+                    console.log(textStatus);
+                    console.log(XMLHttpRequest.status);
+                    console.log(XMLHttpRequest.readyState);
+                    console.log(XMLHttpRequest.response);
+                    // $("div").html(textStatus);
+                    // $("div").append("<br/>"+XMLHttpRequest.status);
+                    // $("div").append("<br/>"+XMLHttpRequest.readyState);
+                    // $("div").append("<br/>"+XMLHttpRequest.responseText);
+                }*/
+            })
+            // var url="http://192.168.1.100:5000/user?&callback=?";
+            // $.jsonp({
+            //     "url":url,
+            //     "success":function (data) {
+            //         console.log(data);
+            //     },
+            //     "error":function (d,msg){
+            //       alert("Could not find user "+msg);
+            //     }
+            // })
+            //
+            // $.getJSON("http://192.168.1.100:5000/user?callback=?", function (json) {
+            //    $("div").append(json);})
+            // });
+        })
+    })
+</script>
+<body>
+<div></div>
+<button type="submit" id="btn">提交</button>
+</body>
+</html>

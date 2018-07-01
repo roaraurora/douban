@@ -1,0 +1,4 @@
+[
+  "test_user_model.py::TestUserModel::test_decode_auth_token",
+  "test_user_model.py::TestUserModel::test_encode_auth_token"
+]
