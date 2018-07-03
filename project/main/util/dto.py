@@ -23,13 +23,29 @@ class UserDto:
     })
 
 
-class UserDetailDto:
-    pass
-
-
 class AuthDto:
     api = Namespace('auth', description='authentication related operations')
     user_auth = api.model('auth_details', {
         'email': fields.String(requried=True, description='The email address'),
         'password': fields.String(required=True, description='The user password'),
+    })
+
+
+class MovieDto:
+    api = Namespace('movie', description='movie relation operation')
+
+    movie = api.model(name='Movie', model={
+        'name': fields.String(required=True, description='Movie name'),
+        'picture': fields.String(required=True, description='Movie picture'),
+        'category': fields.String(required=True, description='Movie name'),
+    })
+
+    pagination = api.model(name='pagination', model={
+        'page': fields.Integer(description='Number of this page of results'),
+        'pages': fields.Integer(description='Total number of pages of results'),
+        'per_page': fields.Integer(description='Number of items per page of result'),
+        'total': fields.Integer(description='Total number of result'),
+    })
+    page_of_movie = api.inherit('page of movie', pagination, {
+        'items': fields.List(fields.Nested(movie))
     })
