@@ -14,6 +14,7 @@ from project.main import create_app, db
 from project import blueprint
 import json
 from project.main.model import user, blacklist, movie
+from flask import request
 
 # todo import and manage.py could detect this and migrate working
 
@@ -50,8 +51,11 @@ def run():
 @app.after_request
 def after_request(response):
     response.headers.set('Access-Control-Allow-Origin', '*')
-    response.headers.add('Access-Control-Allow-Headers', 'x-requested-with,Content-Type,Authorization')
-    # response.headers.add('Access-Control-Allow-Methods', 'DELETE, GET, HEAD, OPTIONS, PATCH, POST, PUT')
+    # response.headers.add('Access-Control-Allow-Headers',
+    #                      '0,content-type,x-requested-with,Content-Type,Authorization,authorization')
+    response.headers.add('Access-Control-Allow-Headers', request.headers.get('Access-Control-Request-Headers'))
+    print(request.headers.get('Access-Control-Request-Headers'))
+    response.headers.add('Access-Control-Allow-Methods', 'DELETE, GET, HEAD, OPTIONS, PATCH, POST, PUT')
     return response
 
 

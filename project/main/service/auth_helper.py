@@ -16,6 +16,9 @@ class Auth:
                     response_object = {
                         'status': 'success',
                         'message': 'Successfully logged in.',
+                        'public_id': user.public_id,
+                        'username': user.username,
+                        'admin':user.admin,
                         'Authorization': auth_token.decode()
                     }
                     print("auth_helper.login_user: login success")
@@ -38,7 +41,7 @@ class Auth:
     @staticmethod
     def logout_user(data):
         if data:
-            auth_token = data.split(" ")[1] # Bearer xxx.xxx.xxx
+            auth_token = data.split(" ")[1]  # Bearer xxx.xxx.xxx
         else:
             auth_token = ''
         if auth_token:
@@ -79,7 +82,7 @@ class Auth:
                         'user_id': user.id,
                         'email': user.email,
                         'admin': user.admin,
-                        'username':user.username,
+                        'username': user.username,
                         'registered_on': str(user.registered_on)
                     }
                 }

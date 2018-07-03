@@ -24,16 +24,6 @@ class Movie(db.Model):
         self.picture = picture
         self.url = url
 
-    @staticmethod
-    def query_by_page(page: int, per_page: int, cache: int):
-        """
-        :param page: page index
-        :param per_page: how many movie for a page
-        :param cache: how many page cache is need
-        :return: a list of page
-        """
-        pass
-
 
 def read_movie(filename):
     """read csv file from out side"""

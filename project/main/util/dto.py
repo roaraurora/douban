@@ -38,6 +38,7 @@ class MovieDto:
         'name': fields.String(required=True, description='Movie name'),
         'picture': fields.String(required=True, description='Movie picture'),
         'category': fields.String(required=True, description='Movie name'),
+        'url': fields.String(required=True, description='Movie url'),
     })
 
     pagination = api.model(name='pagination', model={
@@ -48,4 +49,14 @@ class MovieDto:
     })
     page_of_movie = api.inherit('page of movie', pagination, {
         'items': fields.List(fields.Nested(movie))
+    })
+    movie_detail = api.model(name='movie detail', model={
+        'name': fields.String(required=True, description='Movie name'),
+        'picture': fields.String(required=True, description='Movie picture'),
+        'category': fields.String(required=True, description='Movie name'),
+        'description': fields.String(required=False, description='Movie description'),
+        'cast': fields.String(required=False, description='Movie cast'),
+        'rank': fields.Integer(required=True, description='Movie rank'),
+        'score': fields.String(required=True, description='Movie score'),
+        'url': fields.String(required=True, description='Movie url'),
     })
