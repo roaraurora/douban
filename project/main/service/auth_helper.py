@@ -9,6 +9,7 @@ class Auth:
         try:
             # fetch user data
             user = User.query.filter_by(email=data.get('email')).first()
+            print("auth_helper.login_user: user => {}".format(user))
             if user and user.check_password(data.get('password')):
                 auth_token = user.encode_auth_token(user.id)  # return a jwt or raise exception
                 if auth_token:
@@ -17,6 +18,7 @@ class Auth:
                         'message': 'Successfully logged in.',
                         'Authorization': auth_token.decode()
                     }
+                    print("auth_helper.login_user: login success")
                     return response_object, 200
             else:
                 # user don't exist or password incorrect
@@ -77,6 +79,7 @@ class Auth:
                         'user_id': user.id,
                         'email': user.email,
                         'admin': user.admin,
+                        'username':user.username,
                         'registered_on': str(user.registered_on)
                     }
                 }

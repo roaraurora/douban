@@ -20,6 +20,9 @@ class User(db.Model):
     username = db.Column(db.String(50), unique=True)
     password_hash = db.Column(db.String(100))
 
+    # last_seen = db.Column(db.DateTime, nullable=False, default=datetime.datetime.utcnow)
+    # remember_me = db.Column(db.Integer, nullable=False, default=False)
+
     @property
     def password(self):
         raise AttributeError('password: wrote-only field')
@@ -33,6 +36,12 @@ class User(db.Model):
 
     def __repr__(self):
         return "<User '{}'".format(self.username)
+
+    # def __eq__(self, other):
+    #     if self or other:
+    #         if self.id == other.id:
+    #             return True
+    #     return False
 
     def encode_auth_token(self, user_id):
         """

@@ -15,10 +15,11 @@ class UserLogin(Resource):
     """
 
     @api.doc('user login')
-    @api.expect(user_auth, validate=True)
+    @api.expect(user_auth, validate=True)  # todo validate?
     def post(self):
         # get the post data
-        post_data = request.json  # {data:{email:value,email:value}}
+        post_data = request.json  # {data:{email:value,password:value}}
+        print(post_data)
         return Auth.login_user(data=post_data)  # response_object, status code(200/401/500)
 
 
@@ -31,6 +32,6 @@ class LogoutAPI(Resource):
     @api.doc('logout a user')
     def post(self):
         # get auth token
-        # todo:我有一个大胆的想法,返回的response对象中的token被客户端解析后识别出jwt标准就把该死的token加到了首部字段Authorization里面
         auth_header = request.headers.get('Authorization')
+        print(auth_header)
         return Auth.logout_user(data=auth_header)  # response_object, status code(200/401/500)

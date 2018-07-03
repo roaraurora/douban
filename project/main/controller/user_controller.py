@@ -4,39 +4,75 @@ from flask_restplus import Resource
 from ..util.dto import UserDto
 from ..service.user_service import save_new_user, get_all_users, get_a_user
 from ..util.decorators import token_required, admin_token_required
+from ..util.parser import user_arguments
+from ..service.auth_helper import Auth
 
 api = UserDto.api
-_user = UserDto.user
+_user_create = UserDto.user_create
+_user_detail = UserDto.user_detail
 
 
 @api.route('/')
 class UserList(Resource):
-    @token_required
+    @token_required  # warrant decorator need to be top of all decorator
     @api.doc('list_of_registered_users')
-    @api.marshal_list_with(_user, envelope='data')
+    @api.marshal_list_with(_user_create, envelope='data', skip_none=True)  # 跳过value为None的Filed(password)
     def get(self):
         """list all registered users"""
+        # todo:should not return password
         return get_all_users()
 
-    @api.expect(_user, validate=True)
-    @api.response(201, 'User successfully created')
+    @api.expect(_user_create, validate=True)
+    @api.response(201, 'User successfully created')  # response add api doc
     @api.doc('create a new user')
     def post(self):
         """create a new user"""
         data = request.json
         return save_new_user(data=data)
 
+    # def option(self):
+    #     """"""
+    #     return 200, {'Access-Control-Allow-Origin': '*'}
+
 
 @api.route('/<public_id>')
 @api.param('public_id', 'The User identifier')
 @api.response(404, 'User not found')
-class User(Resource):
+class UserById(Resource):
+    @token_required
     @api.doc('get a user')
-    @api.marshal_with(_user)  # 将user dto作为序列化的对象
-    # @token_required
+    @api.marshal_with(_user_create, skip_none=True)  # 将user dto作为序列化的对象
     def get(self, public_id):
         """get a user given its identifier"""
         user = get_a_user(public_id)
+        print("User by id : {}".format(user))
         if user:
             return user
-        api.abort(404)
+        else:
+            api.abort(404, status='fail', message='User not found')
+
+
+@api.route('/<public_id>/detail')
+@api.param('public_id', 'The User identifier')
+@api.response(404, 'User not found')
+class UserDetailById(Resource):
+    # @api.expect(user_arguments)
+    @token_required
+    @api.doc('get a user full detail and required warrant')
+    @api.marshal_with(_user_detail)  # 将user dto作为序列化的对象
+    @api.response(403, "You have no warrant to this user's detail")
+    def get(self, public_id):
+        """get a user given its identifier"""
+        # args = user_arguments.parse_args(request)
+        # detail = args.get('detail', None)  # default none
+        # print("args: detail => {}".format(detail))
+        user = get_a_user(public_id)
+        print(user, type(user))
+        if user is None:
+            api.abort(404, status='fail', message='User not found')
+        current_user_object, status = Auth.get_logged_in_user(request)
+        current_user_id = current_user_object.get('data').get('user_id')
+        current_user_is_admin = current_user_object.get('data').get('admin')
+        if current_user_id == user.id or current_user_is_admin:
+            return user
+        api.abort(403, status='fail', message="You current have no warrant to this user's detail")
