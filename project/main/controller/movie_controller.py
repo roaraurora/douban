@@ -6,7 +6,7 @@ from ..util.parser import pagination_arguments
 
 from ..util.dto import MovieDto
 from ..model.movie import Movie
-from ..service.movie_service import get_a_movie, get_movie_order, get_movie_by_query
+from ..service.movie_service import get_a_movie, get_movie_order, get_movie_by_query, get_movie_bt_search
 
 api = MovieDto.api
 _page_of_movie = MovieDto.page_of_movie
@@ -25,9 +25,13 @@ class MovieList(Resource):
         :return:list of movies
         """
         args = pagination_arguments.parse_args(request)
+        search = args.get('search', None)
         page = args.get('page', 1)
         per_page = args.get('per_page', 16)
-        movie_page = get_movie_order(page, per_page)
+        if search:
+            movie_page = get_movie_bt_search(search_pattern=search, page=page, per_page=per_page)
+        else:
+            movie_page = get_movie_order(page, per_page)
         return movie_page
 
 
