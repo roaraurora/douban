@@ -16,7 +16,7 @@ import json
 from project.main.model import user, blacklist, movie
 from flask import request
 
-# todo import and manage.py could detect this and migrate working
+from project.main.util.search import get_prior_user
 
 app = create_app(os.getenv('BOILERPLATE_ENV') or 'dev')
 app.register_blueprint(blueprint)
@@ -54,7 +54,7 @@ def after_request(response):
     # response.headers.add('Access-Control-Allow-Headers',
     #                      '0,content-type,x-requested-with,Content-Type,Authorization,authorization')
     response.headers.add('Access-Control-Allow-Headers', request.headers.get('Access-Control-Request-Headers'))
-    print(request.headers.get('Access-Control-Request-Headers'))
+    # print(request.headers.get('Access-Control-Request-Headers'))
     response.headers.add('Access-Control-Allow-Methods', 'DELETE, GET, HEAD, OPTIONS, PATCH, POST, PUT')
     return response
 
@@ -62,7 +62,7 @@ def after_request(response):
 @app.shell_context_processor
 def make_shell_context():
     return dict(db=db, User=user.User, BlacklistToken=blacklist.BlacklistToken, Movie=movie.Movie,
-                read_movie=movie.read_movie)
+                read_movie=movie.read_movie, get_prior_user=get_prior_user)
 
 
 manager.add_command('shell', Shell(make_context=make_shell_context))

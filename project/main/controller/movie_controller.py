@@ -2,8 +2,8 @@ from flask import request
 from flask_restplus import Resource
 
 from project.main.util.decorators import token_required
-from ..util.parser import pagination_arguments
-
+from ..util.parser import pagination_arguments, prior_search_arguments
+from ..util.search import get_prior_user
 from ..util.dto import MovieDto
 from ..model.movie import Movie
 from ..service.movie_service import get_a_movie, get_movie_order, get_movie_by_query, get_movie_bt_search
@@ -28,6 +28,7 @@ class MovieList(Resource):
         search = args.get('search', None)
         page = args.get('page', 1)
         per_page = args.get('per_page', 16)
+
         if search:
             movie_page = get_movie_bt_search(search_pattern=search, page=page, per_page=per_page)
         else:
@@ -69,3 +70,17 @@ class MovieListByQuery(Resource):
         per_page = args.get('per_page', 16)
         movie_page = get_movie_by_query(query_string, page, per_page)
         return movie_page
+
+
+@api.route('/name')
+class MovieSearchPrior(Resource):
+
+    @api.doc('get movie name by prior search')
+    @api.expect(prior_search_arguments, validate=True)
+    @api.response(404, 'request args value cant be null')
+    def get(self):
+        args = prior_search_arguments.parse_args(request)
+        search_string = args.get('search', None)
+        if search_string:
+            return get_prior_user(search_string)
+        api.abort(404, status='fail', message='Prior search Movie not found')
