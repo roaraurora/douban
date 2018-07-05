@@ -2,7 +2,8 @@ from flask import request
 from flask_restplus import Resource
 
 from ..util.dto import UserDto
-from ..service.user_service import save_new_user, get_all_users, get_a_user
+from ..service.user_service import save_new_user, get_all_users, get_a_user, search_all_user, modify_a_user, \
+    delete_a_user
 from ..util.decorators import token_required, admin_token_required
 from ..util.parser import user_arguments
 from ..service.auth_helper import Auth
@@ -12,15 +13,17 @@ _user_create = UserDto.user_create
 _user_detail = UserDto.user_detail
 
 
-@api.route('/')
+@api.route('')
 class UserList(Resource):
-    @token_required  # warrant decorator need to be top of all decorator
+    @admin_token_required  # warrant decorator need to be top of all decorator
     @api.doc('list_of_registered_users')
-    @api.marshal_list_with(_user_create, envelope='data', skip_none=True)  # 跳过value为None的Filed(password)
+    @api.expect(user_arguments, validate=True)
+    @api.marshal_list_with(_user_detail, skip_none=True)
     def get(self):
         """list all registered users"""
-        # todo:should not return password
-        return get_all_users()
+        args = user_arguments.parse_args(request)
+        search_string = args.get('search', None)
+        return search_all_user(search_string)
 
     @api.expect(_user_create, validate=True)
     @api.response(201, 'User successfully created')  # response add api doc
@@ -76,3 +79,17 @@ class UserDetailById(Resource):
         if current_user_id == user.id or current_user_is_admin:
             return user
         api.abort(403, status='fail', message="You current have no warrant to this user's detail")
+
+    @admin_token_required
+    @api.doc('modify a user full detail and required warrant')
+    def put(self, public_id):
+        user = get_a_user(public_id)
+        data = request.json
+        response, status = modify_a_user(data, user)
+        return response, status
+
+    @admin_token_required
+    def delete(self, public_id):
+        user = get_a_user(public_id)
+        response, status = delete_a_user(user)
+        return response, status

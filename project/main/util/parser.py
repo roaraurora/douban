@@ -1,7 +1,7 @@
 from flask_restplus import reqparse
 
 user_arguments = reqparse.RequestParser()
-user_arguments.add_argument('detail', required=False, location='args')
+user_arguments.add_argument('search', required=False, location='args')
 
 pagination_arguments = reqparse.RequestParser()
 pagination_arguments.add_argument('page', type=int, required=False, default=1, help='Page number')

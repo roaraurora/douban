@@ -6,14 +6,15 @@ from ..util.parser import pagination_arguments, prior_search_arguments
 from ..util.search import get_prior_user
 from ..util.dto import MovieDto
 from ..model.movie import Movie
-from ..service.movie_service import get_a_movie, get_movie_order, get_movie_by_query, get_movie_bt_search
+from ..service.movie_service import get_a_movie, get_movie_order, get_movie_by_query, get_movie_bt_search, \
+    delete_a_movie
 
 api = MovieDto.api
 _page_of_movie = MovieDto.page_of_movie
 _detail_of_movie = MovieDto.movie_detail
 
 
-@api.route('/')
+@api.route('')
 class MovieList(Resource):
 
     @api.doc('get pages of movie')
@@ -51,6 +52,13 @@ class MovieById(Resource):
             return movie
         else:
             api.abort(404, status='fail', message='Movie not found')
+
+    @token_required
+    @api.doc('get a movie')
+    def delete(self, id):
+        """delete a user given its identifier"""
+        resp = delete_a_movie(id)
+        return resp
 
 
 @api.route('/category/<query_string>')
