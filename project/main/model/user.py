@@ -15,9 +15,9 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     email = db.Column(db.String(255), unique=True, nullable=False, index=True)
     registered_on = db.Column(db.DateTime, nullable=False)
-    admin = db.Column(db.String(100), unique=True)
+    admin = db.Column(db.String(100))
     public_id = db.Column(db.String(100), unique=True, index=True)
-    username = db.Column(db.String(50), unique=True)
+    username = db.Column(db.String(50))
     password_hash = db.Column(db.String(100))
 
     # last_seen = db.Column(db.DateTime, nullable=False, default=datetime.datetime.utcnow)
@@ -43,8 +43,7 @@ class User(db.Model):
     #             return True
     #     return False
 
-    @staticmethod
-    def encode_auth_token(user_id):
+    def encode_auth_token(self, user_id):
         """
         Generates the Auth Toekn
         :param user_id:  接受一个用户ID
